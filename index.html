@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Cantina del Salón</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════
+   VARIABLES & RESET
+════════════════════════════════ */
+:root {
+  --gold: #C9A84C; --gold-light: #E8C97A; --gold-dim: #8B6A2A;
+  --bg: #0A0A0A; --bg2: #111111; --bg3: #181818;
+  --text: #F0EAD6; --text-dim: #9A8E76; --red: #C0392B; --card: #141414;
+  --admin-bg: #0D1117; --admin-card: #161B22; --admin-border: #30363D;
+  --admin-accent: #C9A84C; --admin-green: #3FB950; --admin-red: #F85149;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--text); font-family:'Outfit',sans-serif; font-size:16px; line-height:1.5; overflow-x:hidden; }
+
+/* ════════════════════════════════
+   NAV
+════════════════════════════════ */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  background:rgba(10,10,10,0.92); backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(201,168,76,0.15);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 20px;
+}
+.nav-logo { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--gold); letter-spacing:0.05em; cursor:pointer; }
+.nav-links { display:flex; gap:4px; }
+.nav-links a {
+  color:var(--text-dim); text-decoration:none; font-size:0.72rem; font-weight:500;
+  letter-spacing:0.08em; text-transform:uppercase; padding:7px 10px; border-radius:20px; transition:all 0.2s;
+}
+.nav-links a:hover, .nav-links a.active { color:var(--gold); background:rgba(201,168,76,0.1); }
+.nav-admin-btn {
+  background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.25);
+  color:var(--gold); font-size:0.7rem; font-weight:600; letter-spacing:0.1em;
+  text-transform:uppercase; padding:6px 12px; border-radius:20px; cursor:pointer;
+  transition:all 0.2s; font-family:'Outfit',sans-serif; flex-shrink:0;
+}
+.nav-admin-btn:hover { background:rgba(201,168,76,0.2); }
+
+/* ════════════════════════════════
+   HERO
+════════════════════════════════ */
+#inicio {
+  min-height:100svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:100px 24px 60px; position:relative; overflow:hidden;
+}
+.hero-bg {
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(201,168,76,0.08) 0%, transparent 70%),
+              radial-gradient(ellipse 50% 40% at 80% 80%, rgba(192,57,43,0.06) 0%, transparent 60%),
+              linear-gradient(180deg, #0A0A0A 0%, #0D0D0A 100%);
+}
+.hero-grid {
+  position:absolute; inset:0; opacity:0.04;
+  background-image:linear-gradient(rgba(201,168,76,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.5) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  border:1px solid rgba(201,168,76,0.3); border-radius:30px; padding:6px 16px;
+  font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold);
+  margin-bottom:24px; position:relative; animation:fadeUp 0.8s ease both;
+}
+.hero-badge::before { content:''; width:6px; height:6px; background:var(--gold); border-radius:50%; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
+.hero-title {
+  font-family:'Playfair Display',serif; font-size:clamp(2.6rem,9vw,4rem); font-weight:900;
+  line-height:1.05; letter-spacing:-0.02em; margin-bottom:12px; position:relative; animation:fadeUp 0.8s 0.1s ease both;
+}
+.hero-title span { color:var(--gold); display:block; }
+.hero-subtitle { color:var(--text-dim); font-size:0.95rem; font-weight:300; letter-spacing:0.05em; margin-bottom:48px; animation:fadeUp 0.8s 0.2s ease both; }
+.hero-image {
+  width:100%; max-width:380px; height:220px; border-radius:16px; overflow:hidden;
+  margin-bottom:40px; position:relative; border:1px solid rgba(201,168,76,0.2); animation:fadeUp 0.8s 0.3s ease both;
+}
+.hero-image img { width:100%; height:100%; object-fit:cover; }
+.hero-image-placeholder {
+  width:100%; height:100%; background:linear-gradient(135deg,#1A1209 0%,#0D0D0A 50%,#12100A 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+}
+.hero-image-placeholder .icon { font-size:3rem; }
+.hero-image-placeholder span { color:var(--text-dim); font-size:0.8rem; letter-spacing:0.1em; }
+.hero-image::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,transparent 40%,rgba(10,10,10,0.6) 100%); pointer-events:none; }
+.hero-buttons { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; max-width:380px; animation:fadeUp 0.8s 0.4s ease both; }
+.btn {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  padding:16px 12px; border-radius:12px; font-family:'Outfit',sans-serif; font-size:0.82rem;
+  font-weight:600; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none;
+  border:none; cursor:pointer; transition:all 0.25s; -webkit-appearance:none;
+}
+.btn-gold { background:linear-gradient(135deg,var(--gold),var(--gold-dim)); color:#0A0A0A; }
+.btn-gold:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(201,168,76,0.3); }
+.btn-outline { background:transparent; border:1px solid rgba(201,168,76,0.35); color:var(--gold); }
+.btn-outline:hover { background:rgba(201,168,76,0.08); transform:translateY(-2px); }
+.btn-insta { grid-column:1/-1; background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045); color:white; }
+.btn-insta:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(253,29,29,0.25); }
+.btn-emoji { font-size:1rem; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+/* ════════════════════════════════
+   SECTIONS SHARED
+════════════════════════════════ */
+section { padding:64px 0 48px; }
+.section-header { text-align:center; padding:0 24px; margin-bottom:32px; }
+.section-eyebrow { font-size:0.68rem; font-weight:600; letter-spacing:0.25em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+.section-title { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,6vw,2.4rem); font-weight:700; line-height:1.1; margin-bottom:10px; }
+.section-desc { color:var(--text-dim); font-size:0.88rem; max-width:300px; margin:0 auto; }
+.section-divider { width:48px; height:2px; background:linear-gradient(90deg,var(--gold),transparent); margin:16px auto 0; }
+
+/* ════════════════════════════════
+   POPULAR STRIP
+════════════════════════════════ */
+.popular-strip {
+  background:linear-gradient(135deg,#1A1205,#12100A);
+  border-top:1px solid rgba(201,168,76,0.2); border-bottom:1px solid rgba(201,168,76,0.2);
+  padding:24px 0; margin-bottom:32px; overflow-x:auto; -webkit-overflow-scrolling:touch;
+}
+.popular-strip::-webkit-scrollbar { display:none; }
+.popular-label { font-size:0.65rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); padding:0 20px 12px; }
+.popular-row { display:flex; gap:12px; padding:0 20px; min-width:max-content; }
+.popular-card {
+  background:var(--card); border:1px solid rgba(201,168,76,0.15); border-radius:14px;
+  padding:14px 18px; min-width:130px; text-align:center; flex-shrink:0; position:relative; overflow:hidden;
+}
+.popular-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--gold),transparent); }
+.popular-fire { font-size:1.4rem; margin-bottom:4px; }
+.popular-name { font-size:0.82rem; font-weight:600; color:var(--text); margin-bottom:2px; }
+.popular-price { font-size:0.78rem; color:var(--gold); font-weight:500; }
+
+/* ════════════════════════════════
+   RECOMENDADOS
+════════════════════════════════ */
+.recomendados-strip {
+  background:linear-gradient(135deg,#110A0A,#0D0A0D); border:1px solid rgba(192,57,43,0.2);
+  border-radius:16px; margin:0 16px 32px; padding:20px; position:relative; overflow:hidden;
+}
+.recomendados-strip::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at top left,rgba(192,57,43,0.08),transparent 70%); }
+.rec-header { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+.rec-icon { font-size:1.4rem; }
+.rec-title { font-size:0.9rem; font-weight:700; color:#E57373; letter-spacing:0.05em; }
+.rec-subtitle { font-size:0.72rem; color:var(--text-dim); }
+.rec-items { display:flex; gap:10px; flex-wrap:wrap; }
+.rec-chip {
+  display:flex; align-items:center; gap:6px; background:rgba(192,57,43,0.15);
+  border:1px solid rgba(192,57,43,0.25); border-radius:30px; padding:8px 14px;
+  font-size:0.8rem; color:#FFAB91; font-weight:500;
+}
+
+/* ════════════════════════════════
+   MENU TABS & ITEMS
+════════════════════════════════ */
+.menu-tabs { display:flex; gap:8px; overflow-x:auto; padding:0 16px 16px; -webkit-overflow-scrolling:touch; }
+.menu-tabs::-webkit-scrollbar { display:none; }
+.tab-btn {
+  flex-shrink:0; padding:9px 16px; border-radius:30px; background:var(--card);
+  border:1px solid rgba(255,255,255,0.06); color:var(--text-dim); font-family:'Outfit',sans-serif;
+  font-size:0.78rem; font-weight:500; cursor:pointer; transition:all 0.2s; white-space:nowrap;
+}
+.tab-btn.active, .tab-btn:hover { background:rgba(201,168,76,0.12); border-color:rgba(201,168,76,0.4); color:var(--gold); }
+.menu-content { padding:0 16px; }
+.category-block { display:none; }
+.category-block.visible { display:block; }
+.cat-title {
+  font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--gold); margin-bottom:12px;
+  padding-bottom:8px; border-bottom:1px solid rgba(201,168,76,0.15); display:flex; align-items:center; gap:8px;
+}
+.cat-icon { font-size:1.1rem; }
+.item-list { display:flex; flex-direction:column; gap:2px; margin-bottom:24px; }
+.menu-item {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:13px 16px; background:var(--card); border-radius:10px; transition:background 0.2s;
+}
+.menu-item:hover { background:#1C1C1C; }
+.menu-item-left { display:flex; align-items:center; gap:12px; flex:1; min-width:0; }
+.food-thumb {
+  width:52px; height:52px; border-radius:10px; overflow:hidden; flex-shrink:0;
+  background:#1C1810; display:flex; align-items:center; justify-content:center;
+  font-size:1.6rem; border:1px solid rgba(201,168,76,0.1);
+}
+.food-thumb img { width:100%; height:100%; object-fit:cover; }
+.item-name { font-size:0.88rem; font-weight:500; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.item-price { font-size:0.9rem; font-weight:700; color:var(--gold); flex-shrink:0; margin-left:8px; }
+
+/* ════════════════════════════════
+   GALERÍA
+════════════════════════════════ */
+#galeria { background:var(--bg2); }
+.gallery-grid { padding:0 16px; display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.gallery-item {
+  border-radius:12px; overflow:hidden; aspect-ratio:1; background:var(--card);
+  position:relative; border:1px solid rgba(201,168,76,0.1);
+  display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform 0.2s;
+}
+.gallery-item:active { transform:scale(0.97); }
+.gallery-item:first-child { grid-column:span 2; aspect-ratio:16/9; }
+.gallery-item img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+.gallery-placeholder { display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--text-dim); font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; }
+.gallery-placeholder .gi { font-size:2rem; }
+.gallery-overlay { position:absolute; inset:0; background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,0.7) 100%); opacity:0; transition:opacity 0.2s; display:flex; align-items:flex-end; padding:12px; }
+.gallery-item:hover .gallery-overlay { opacity:1; }
+.gallery-overlay span { font-size:0.75rem; color:var(--gold); font-weight:500; }
+.gallery-note { text-align:center; color:var(--text-dim); font-size:0.78rem; padding:20px 24px 0; line-height:1.5; }
+.gallery-note a { color:var(--gold); text-decoration:none; }
+
+/* ════════════════════════════════
+   EVENTOS
+════════════════════════════════ */
+#eventos { background:var(--bg); }
+.eventos-list { padding:0 16px; display:flex; flex-direction:column; gap:16px; }
+.evento-card { background:var(--card); border-radius:16px; overflow:hidden; border:1px solid rgba(201,168,76,0.12); position:relative; }
+.evento-card::before { content:''; position:absolute; top:0; left:0; bottom:0; width:3px; background:linear-gradient(180deg,var(--gold),transparent); }
+.evento-img { width:100%; height:160px; background:linear-gradient(135deg,#1A1205,#0D0D0A); display:flex; align-items:center; justify-content:center; font-size:3.5rem; border-bottom:1px solid rgba(201,168,76,0.1); overflow:hidden; }
+.evento-img img { width:100%; height:100%; object-fit:cover; }
+.evento-body { padding:18px 20px; }
+.evento-date { display:inline-flex; align-items:center; gap:6px; font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; background:rgba(201,168,76,0.08); padding:4px 10px; border-radius:20px; border:1px solid rgba(201,168,76,0.2); }
+.evento-name { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; margin-bottom:8px; line-height:1.2; }
+.evento-desc { color:var(--text-dim); font-size:0.84rem; line-height:1.5; }
+.no-eventos { text-align:center; padding:40px 24px; color:var(--text-dim); font-size:0.88rem; }
+
+/* ════════════════════════════════
+   FOOTER
+════════════════════════════════ */
+footer { background:var(--card); border-top:1px solid rgba(201,168,76,0.15); text-align:center; padding:40px 24px; }
+.footer-logo { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--gold); margin-bottom:8px; }
+.footer-sub { color:var(--text-dim); font-size:0.78rem; margin-bottom:24px; }
+.footer-links { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:24px; }
+.footer-links a { color:var(--text-dim); text-decoration:none; font-size:0.78rem; padding:6px 12px; border-radius:20px; border:1px solid rgba(255,255,255,0.08); transition:all 0.2s; }
+.footer-links a:hover { color:var(--gold); border-color:rgba(201,168,76,0.3); }
+.footer-copy { color:#444; font-size:0.72rem; }
+.back-top { position:fixed; bottom:24px; right:20px; z-index:50; width:44px; height:44px; background:rgba(201,168,76,0.15); border:1px solid rgba(201,168,76,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; cursor:pointer; opacity:0; pointer-events:none; transition:all 0.3s; backdrop-filter:blur(8px); text-decoration:none; color:var(--gold); }
+.back-top.visible { opacity:1; pointer-events:auto; }
+.back-top:hover { background:rgba(201,168,76,0.25); }
+
+/* ════════════════════════════════
+   ADMIN OVERLAY
+════════════════════════════════ */
+#adminOverlay {
+  display:none; position:fixed; inset:0; z-index:500;
+  background:var(--admin-bg); overflow-y:auto;
+  font-family:'Outfit',sans-serif;
+}
+#adminOverlay.open { display:block; }
+
+/* LOGIN */
+#adminLogin {
+  min-height:100svh; display:flex; align-items:center; justify-content:center;
+  padding:24px; background:var(--admin-bg);
+}
+.login-box {
+  background:var(--admin-card); border:1px solid var(--admin-border);
+  border-radius:16px; padding:40px 32px; width:100%; max-width:360px; text-align:center;
+}
+.login-logo { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--admin-accent); margin-bottom:8px; }
+.login-sub { color:#8B949E; font-size:0.85rem; margin-bottom:32px; }
+.login-label { display:block; text-align:left; font-size:0.78rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#8B949E; margin-bottom:8px; }
+.login-input {
+  width:100%; background:#0D1117; border:1px solid var(--admin-border); border-radius:10px;
+  padding:14px 16px; color:var(--text); font-family:'Outfit',sans-serif; font-size:0.95rem;
+  margin-bottom:20px; transition:border-color 0.2s; outline:none;
+}
+.login-input:focus { border-color:var(--admin-accent); }
+.login-btn {
+  width:100%; background:var(--admin-accent); color:#0A0A0A; border:none; border-radius:10px;
+  padding:15px; font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:700;
+  letter-spacing:0.05em; cursor:pointer; transition:all 0.2s;
+}
+.login-btn:hover { opacity:0.9; transform:translateY(-1px); }
+.login-error { color:var(--admin-red); font-size:0.82rem; margin-top:12px; display:none; }
+
+/* ADMIN PANEL */
+#adminPanel { display:none; padding-bottom:80px; }
+#adminPanel.open { display:block; }
+
+.admin-topbar {
+  background:var(--admin-card); border-bottom:1px solid var(--admin-border);
+  display:flex; align-items:center; justify-content:space-between; padding:16px 20px;
+  position:sticky; top:0; z-index:10;
+}
+.admin-topbar-title { font-family:'Playfair Display',serif; color:var(--admin-accent); font-size:1.1rem; }
+.admin-logout {
+  background:rgba(248,81,73,0.1); border:1px solid rgba(248,81,73,0.3); color:var(--admin-red);
+  font-family:'Outfit',sans-serif; font-size:0.75rem; font-weight:600; letter-spacing:0.1em;
+  text-transform:uppercase; padding:8px 14px; border-radius:20px; cursor:pointer; transition:all 0.2s;
+}
+.admin-logout:hover { background:rgba(248,81,73,0.2); }
+
+.admin-tabs {
+  display:flex; gap:0; overflow-x:auto; background:var(--admin-card);
+  border-bottom:1px solid var(--admin-border); -webkit-overflow-scrolling:touch;
+}
+.admin-tabs::-webkit-scrollbar { display:none; }
+.admin-tab {
+  flex-shrink:0; padding:14px 18px; border:none; background:transparent;
+  color:#8B949E; font-family:'Outfit',sans-serif; font-size:0.8rem; font-weight:600;
+  letter-spacing:0.05em; text-transform:uppercase; cursor:pointer; transition:all 0.2s;
+  border-bottom:2px solid transparent;
+}
+.admin-tab.active { color:var(--admin-accent); border-bottom-color:var(--admin-accent); background:rgba(201,168,76,0.05); }
+
+.admin-section { display:none; padding:20px 16px; }
+.admin-section.active { display:block; }
+
+.admin-card { background:var(--admin-card); border:1px solid var(--admin-border); border-radius:12px; padding:20px; margin-bottom:16px; }
+.admin-card-title { font-size:0.8rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--admin-accent); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+
+.afield { margin-bottom:14px; }
+.afield label { display:block; font-size:0.75rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:#8B949E; margin-bottom:6px; }
+.afield input, .afield textarea, .afield select {
+  width:100%; background:#0D1117; border:1px solid var(--admin-border); border-radius:8px;
+  padding:11px 14px; color:var(--text); font-family:'Outfit',sans-serif; font-size:0.88rem;
+  transition:border-color 0.2s; outline:none; resize:vertical;
+}
+.afield input:focus, .afield textarea:focus, .afield select:focus { border-color:var(--admin-accent); }
+.afield-row { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; }
+.afield-row input { min-width:0; }
+
+.abtn {
+  padding:11px 18px; border-radius:8px; border:none; font-family:'Outfit',sans-serif;
+  font-size:0.82rem; font-weight:600; cursor:pointer; transition:all 0.2s; letter-spacing:0.03em;
+}
+.abtn-gold { background:var(--admin-accent); color:#0A0A0A; }
+.abtn-gold:hover { opacity:0.9; }
+.abtn-outline { background:transparent; border:1px solid var(--admin-border); color:var(--text-dim); }
+.abtn-outline:hover { border-color:var(--admin-accent); color:var(--admin-accent); }
+.abtn-red { background:rgba(248,81,73,0.1); border:1px solid rgba(248,81,73,0.3); color:var(--admin-red); }
+.abtn-red:hover { background:rgba(248,81,73,0.2); }
+.abtn-green { background:var(--admin-green); color:#0A0A0A; }
+.abtn-sm { padding:7px 12px; font-size:0.75rem; }
+.abtn-full { width:100%; text-align:center; }
+
+/* Menu item admin rows */
+.menu-admin-item {
+  display:flex; align-items:center; gap:10px; padding:10px 12px;
+  background:#0D1117; border-radius:8px; margin-bottom:6px; border:1px solid var(--admin-border);
+}
+.menu-admin-item input[type=text], .menu-admin-item input[type=number] {
+  background:transparent; border:none; border-bottom:1px solid var(--admin-border);
+  border-radius:0; padding:4px 2px; color:var(--text); font-family:'Outfit',sans-serif; font-size:0.85rem;
+  outline:none; transition:border-color 0.2s;
+}
+.menu-admin-item input[type=text] { flex:1; }
+.menu-admin-item input[type=number] { width:90px; text-align:right; color:var(--admin-accent); }
+.menu-admin-item input:focus { border-bottom-color:var(--admin-accent); }
+.drag-handle { color:#444; cursor:grab; font-size:1rem; flex-shrink:0; }
+
+/* Popular & rec chips in admin */
+.popular-admin-item {
+  display:flex; gap:8px; align-items:center; padding:10px 12px;
+  background:#0D1117; border-radius:8px; margin-bottom:6px; border:1px solid var(--admin-border);
+}
+.popular-admin-item input { flex:1; background:transparent; border:none; border-bottom:1px solid var(--admin-border); padding:3px 2px; color:var(--text); font-family:'Outfit',sans-serif; font-size:0.85rem; outline:none; transition:border-color 0.2s; border-radius:0; }
+.popular-admin-item input[type=number] { width:90px; flex:none; text-align:right; color:var(--admin-accent); }
+.popular-admin-item input:focus { border-bottom-color:var(--admin-accent); }
+
+/* Evento admin row */
+.evento-admin-row {
+  background:#0D1117; border:1px solid var(--admin-border); border-radius:10px; padding:16px; margin-bottom:12px;
+}
+.evento-admin-row .row-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.evento-admin-row .row-num { font-size:0.75rem; color:#8B949E; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; }
+
+/* Gallery admin */
+.gallery-admin-item { display:flex; gap:10px; align-items:center; background:#0D1117; border:1px solid var(--admin-border); border-radius:8px; padding:10px 12px; margin-bottom:6px; }
+.gallery-admin-item input { flex:1; background:transparent; border:none; border-bottom:1px solid var(--admin-border); border-radius:0; padding:3px 2px; color:var(--text); font-family:'Outfit',sans-serif; font-size:0.82rem; outline:none; }
+.gallery-admin-item input:focus { border-bottom-color:var(--admin-accent); }
+.gallery-thumb { width:48px; height:48px; border-radius:6px; object-fit:cover; background:#1A1A1A; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:1.2rem; overflow:hidden; }
+.gallery-thumb img { width:100%; height:100%; object-fit:cover; }
+
+/* Save toast */
+.save-toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:var(--admin-green); color:#0A0A0A; font-weight:700; font-size:0.85rem;
+  padding:12px 24px; border-radius:30px; z-index:600;
+  transition:transform 0.3s; pointer-events:none; white-space:nowrap;
+}
+.save-toast.show { transform:translateX(-50%) translateY(0); }
+
+/* Password change */
+.pwd-info { font-size:0.8rem; color:#8B949E; line-height:1.5; margin-bottom:16px; }
+
+/* Sections accordion on admin */
+.cat-accordion { border:1px solid var(--admin-border); border-radius:10px; margin-bottom:8px; overflow:hidden; }
+.cat-accordion-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px; background:var(--admin-card); cursor:pointer; user-select:none;
+}
+.cat-accordion-header:hover { background:#1C2028; }
+.cat-accordion-title { font-size:0.85rem; font-weight:600; color:var(--text); display:flex; align-items:center; gap:8px; }
+.cat-accordion-arrow { color:#8B949E; transition:transform 0.2s; font-size:0.8rem; }
+.cat-accordion.open .cat-accordion-arrow { transform:rotate(180deg); }
+.cat-accordion-body { display:none; padding:12px; background:#0D1117; }
+.cat-accordion.open .cat-accordion-body { display:block; }
+
+/* Popular select */
+.popular-admin-item select {
+  width:100%; background:#0D1117; border:1px solid var(--admin-border); border-radius:8px;
+  padding:10px 12px; color:var(--text); font-family:'Outfit',sans-serif; font-size:0.85rem;
+  outline:none; transition:border-color 0.2s; cursor:pointer;
+}
+.popular-admin-item select:focus { border-color:var(--admin-accent); }
+.pop-preview { display:flex; align-items:center; gap:6px; font-size:0.83rem; }
+
+/* File upload hint */
+.upload-hint { font-size:0.73rem; color:#8B949E; margin-top:4px; line-height:1.4; }
+</style>
+</head>
+<body>
+
+<!-- ════ NAV ════ -->
+<nav>
+  <div class="nav-logo" id="navLogo">✦ Cantina</div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div class="nav-links">
+      <a href="#inicio">Inicio</a>
+      <a href="#carta">Carta</a>
+      <a href="#galeria">Fotos</a>
+      <a href="#eventos">Eventos</a>
+    </div>
+    <button class="nav-admin-btn" onclick="openAdmin()">⚙️ Admin</button>
+  </div>
+</nav>
+
+<!-- ════ HERO ════ -->
+<section id="inicio">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-badge">✦ <span id="heroBadge">Bienvenido</span></div>
+  <h1 class="hero-title" id="heroTitle">El Salón<span id="heroSubtitle">&amp; Cantina</span></h1>
+  <p class="hero-subtitle" id="heroTagline">Bebidas · Comidas · Eventos</p>
+  <div class="hero-image" id="heroImageWrap">
+    <div class="hero-image-placeholder" id="heroImgPlaceholder">
+      <span class="icon">🎉</span>
+      <span>Tu foto del salón aquí</span>
+    </div>
+  </div>
+  <div class="hero-buttons">
+    <a href="#carta" class="btn btn-gold"><span class="btn-emoji">🍺</span> Ver Carta</a>
+    <a href="#eventos" class="btn btn-outline"><span class="btn-emoji">📅</span> Eventos</a>
+    <a href="#galeria" class="btn btn-outline"><span class="btn-emoji">📷</span> Galería</a>
+    <a id="instaBtn" href="#" class="btn btn-outline" target="_blank"><span class="btn-emoji">📸</span> Instagram</a>
+  </div>
+</section>
+
+<!-- ════ CARTA ════ -->
+<section id="carta">
+  <div class="section-header">
+    <div class="section-eyebrow">✦ Menú</div>
+    <h2 class="section-title">Carta de Cantina</h2>
+    <p class="section-desc">Pedí en barra o llamá al mozo</p>
+    <div class="section-divider"></div>
+  </div>
+
+  <!-- Popular strip -->
+  <div class="popular-strip">
+    <div class="popular-label">🔥 Lo más pedido esta noche</div>
+    <div class="popular-row" id="popularRow"></div>
+  </div>
+
+  <!-- Recomendados -->
+  <div class="recomendados-strip">
+    <div class="rec-header">
+      <span class="rec-icon">🍹</span>
+      <div>
+        <div class="rec-title">Recomendados de la noche</div>
+        <div class="rec-subtitle">Los favoritos del barman</div>
+      </div>
+    </div>
+    <div class="rec-items" id="recItems"></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="menu-tabs" id="menuTabs"></div>
+  <div class="menu-content" id="menuContent"></div>
+</section>
+
+<!-- ════ GALERÍA ════ -->
+<section id="galeria">
+  <div class="section-header">
+    <div class="section-eyebrow">✦ Fotos</div>
+    <h2 class="section-title">Galería</h2>
+    <p class="section-desc">El salón, fiestas y eventos</p>
+    <div class="section-divider"></div>
+  </div>
+  <div class="gallery-grid" id="galleryGrid"></div>
+  <p class="gallery-note">
+    Ver más en <a id="instaGalleryLink" href="#" target="_blank">@tusalonaqui ↗</a>
+  </p>
+</section>
+
+<!-- ════ EVENTOS ════ -->
+<section id="eventos">
+  <div class="section-header">
+    <div class="section-eyebrow">✦ Agenda</div>
+    <h2 class="section-title">Próximos Eventos</h2>
+    <p class="section-desc">No te pierdas lo que viene</p>
+    <div class="section-divider"></div>
+  </div>
+  <div class="eventos-list" id="eventosList"></div>
+</section>
+
+<!-- ════ FOOTER ════ -->
+<footer>
+  <div class="footer-logo" id="footerLogo">✦ El Salón & Cantina</div>
+  <div class="footer-sub" id="footerSub">Bebidas · Comidas · Eventos · Casamientos</div>
+  <div class="footer-links">
+    <a href="#inicio">Inicio</a><a href="#carta">Carta</a>
+    <a href="#galeria">Galería</a><a href="#eventos">Eventos</a>
+    <a id="instaFooterLink" href="#" target="_blank">Instagram</a>
+  </div>
+  <div class="footer-copy">© 2025 · Todos los precios en pesos argentinos · Sujeto a cambios sin previo aviso</div>
+</footer>
+<a href="#inicio" class="back-top" id="backTop">↑</a>
+
+<!-- ════════════════════════════════
+     ADMIN OVERLAY
+════════════════════════════════ -->
+<div id="adminOverlay">
+
+  <!-- LOGIN -->
+  <div id="adminLogin">
+    <div class="login-box">
+      <div class="login-logo">⚙️ Admin</div>
+      <div class="login-sub">Panel de administración · Cantina</div>
+      <label class="login-label">Contraseña</label>
+      <input type="password" class="login-input" id="loginInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="login-btn" onclick="doLogin()">Ingresar</button>
+      <div class="login-error" id="loginError">Contraseña incorrecta</div>
+    </div>
+  </div>
+
+  <!-- PANEL -->
+  <div id="adminPanel">
+    <div class="admin-topbar">
+      <span class="admin-topbar-title">⚙️ Panel Admin</span>
+      <button class="admin-logout" onclick="doLogout()">Salir</button>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('general',this)">🏠 General</button>
+      <button class="admin-tab" onclick="switchAdminTab('popular',this)">🔥 Popular</button>
+      <button class="admin-tab" onclick="switchAdminTab('menu',this)">📋 Menú</button>
+      <button class="admin-tab" onclick="switchAdminTab('galeria',this)">📷 Galería</button>
+      <button class="admin-tab" onclick="switchAdminTab('eventos',this)">📅 Eventos</button>
+      <button class="admin-tab" onclick="switchAdminTab('config',this)">🔒 Config</button>
+    </div>
+
+    <!-- ── GENERAL ── -->
+    <div class="admin-section active" id="atab-general">
+      <div class="admin-card">
+        <div class="admin-card-title">🏠 Información del salón</div>
+        <div class="afield"><label>Nombre del salón (línea 1)</label><input type="text" id="a-salonName1" placeholder="El Salón"></div>
+        <div class="afield"><label>Nombre (línea 2 / dorado)</label><input type="text" id="a-salonName2" placeholder="& Cantina"></div>
+        <div class="afield"><label>Tagline / Subtítulo</label><input type="text" id="a-tagline" placeholder="Bebidas · Comidas · Eventos"></div>
+        <div class="afield"><label>Badge de bienvenida</label><input type="text" id="a-badge" placeholder="Bienvenido"></div>
+        <div class="afield"><label>Footer — texto pequeño</label><input type="text" id="a-footerSub" placeholder="Bebidas · Comidas · Eventos · Casamientos"></div>
+        <div class="afield"><label>Instagram (URL completa)</label><input type="text" id="a-instagram" placeholder="https://instagram.com/tusalon"></div>
+        <div class="afield"><label>Handle de Instagram (para mostrar)</label><input type="text" id="a-instaHandle" placeholder="@tusalon"></div>
+        <button class="abtn abtn-gold abtn-full" onclick="saveGeneral()">💾 Guardar cambios</button>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-title">🖼️ Foto principal del hero</div>
+        <div class="afield">
+          <label>URL de imagen (o dejá vacío para placeholder)</label>
+          <input type="text" id="a-heroImg" placeholder="https://... o dejá vacío">
+          <div class="upload-hint">Subí tu foto a <strong>imgbb.com</strong>, <strong>cloudinary.com</strong> o cualquier host de imágenes y pegá la URL aquí.</div>
+        </div>
+        <button class="abtn abtn-gold abtn-full" onclick="saveGeneral()">💾 Guardar</button>
+      </div>
+    </div>
+
+    <!-- ── POPULAR ── -->
+    <div class="admin-section" id="atab-popular">
+      <div class="admin-card">
+        <div class="admin-card-title">🔥 Lo más pedido</div>
+        <div id="popularAdminList"></div>
+        <button class="abtn abtn-outline abtn-full" style="margin-top:8px" onclick="addPopularItem()">+ Agregar producto</button>
+        <button class="abtn abtn-gold abtn-full" style="margin-top:10px" onclick="savePopular()">💾 Guardar</button>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-title">🍹 Tragos recomendados</div>
+        <div id="recAdminList"></div>
+        <button class="abtn abtn-outline abtn-full" style="margin-top:8px" onclick="addRecItem()">+ Agregar trago</button>
+        <button class="abtn abtn-gold abtn-full" style="margin-top:10px" onclick="saveRec()">💾 Guardar</button>
+      </div>
+    </div>
+
+    <!-- ── MENÚ ── -->
+    <div class="admin-section" id="atab-menu">
+      <div class="admin-card" style="padding:14px 16px">
+        <div class="admin-card-title">📋 Editar precios por categoría</div>
+        <p style="font-size:0.8rem;color:#8B949E;margin-bottom:16px">Tocá una categoría para expandirla y editar nombre y precio de cada producto.</p>
+        <div id="menuAdminCats"></div>
+        <button class="abtn abtn-gold abtn-full" style="margin-top:16px" onclick="saveMenu()">💾 Guardar todos los precios</button>
+      </div>
+    </div>
+
+    <!-- ── GALERÍA ── -->
+    <div class="admin-section" id="atab-galeria">
+      <div class="admin-card">
+        <div class="admin-card-title">📷 Fotos de galería</div>
+        <p style="font-size:0.8rem;color:#8B949E;margin-bottom:16px">Pegá URLs de imágenes. Subí las fotos a <strong style="color:var(--admin-accent)">imgbb.com</strong> gratis y pegá el link directo.</p>
+        <div id="galleryAdminList"></div>
+        <button class="abtn abtn-outline abtn-full" style="margin-top:8px" onclick="addGalleryItem()">+ Agregar foto</button>
+        <button class="abtn abtn-gold abtn-full" style="margin-top:10px" onclick="saveGallery()">💾 Guardar galería</button>
+      </div>
+    </div>
+
+    <!-- ── EVENTOS ── -->
+    <div class="admin-section" id="atab-eventos">
+      <div class="admin-card">
+        <div class="admin-card-title">📅 Próximos eventos</div>
+        <div id="eventosAdminList"></div>
+        <button class="abtn abtn-outline abtn-full" style="margin-top:8px" onclick="addEvento()">+ Agregar evento</button>
+        <button class="abtn abtn-gold abtn-full" style="margin-top:10px" onclick="saveEventos()">💾 Guardar eventos</button>
+      </div>
+    </div>
+
+    <!-- ── CONFIG ── -->
+    <div class="admin-section" id="atab-config">
+      <div class="admin-card">
+        <div class="admin-card-title">🔒 Cambiar contraseña</div>
+        <p class="pwd-info">Cambiá la contraseña del panel admin. La contraseña por defecto es <strong style="color:var(--admin-accent)">admin123</strong></p>
+        <div class="afield"><label>Contraseña actual</label><input type="password" id="pwdCurrent" placeholder="••••••••"></div>
+        <div class="afield"><label>Nueva contraseña</label><input type="password" id="pwdNew" placeholder="••••••••"></div>
+        <div class="afield"><label>Confirmar nueva contraseña</label><input type="password" id="pwdConfirm" placeholder="••••••••"></div>
+        <button class="abtn abtn-gold abtn-full" onclick="changePassword()">🔒 Cambiar contraseña</button>
+        <div id="pwdMsg" style="margin-top:10px;font-size:0.82rem;display:none"></div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">🗑️ Resetear datos</div>
+        <p style="font-size:0.8rem;color:#8B949E;margin-bottom:16px">Esto borrará todos los cambios y volverá a los datos originales.</p>
+        <button class="abtn abtn-red abtn-full" onclick="resetAll()">⚠️ Resetear todo</button>
+      </div>
+    </div>
+
+  </div><!-- end adminPanel -->
+</div><!-- end adminOverlay -->
+
+<!-- SAVE TOAST -->
+<div class="save-toast" id="saveToast">✓ Guardado</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   DEFAULT DATA
+════════════════════════════════════════════════════════════ */
+const DEFAULT = {
+  password: 'admin123',
+  general: {
+    salonName1: 'El Salón',
+    salonName2: '& Cantina',
+    tagline: 'Bebidas · Comidas · Eventos',
+    badge: 'Bienvenido',
+    footerSub: 'Bebidas · Comidas · Eventos · Casamientos',
+    instagram: 'https://instagram.com/tusalonaqui',
+    instaHandle: '@tusalonaqui',
+    heroImg: ''
+  },
+  popular: [
+    { ref: 'tragos:2' },
+    { ref: 'cervezas:0' },
+    { ref: 'comidas:8' },
+    { ref: 'comidas:4' },
+    { ref: 'tragos:1' }
+  ],
+  rec: ['🥃 Fernet con Coca', '🥃 Whiscola', '🍊 Gancia'],
+  menu: [
+    { id:'tragos', icon:'🥃', title:'Tragos', items:[
+      {name:'Whisky',price:4000},{name:'Whiscola',price:4000},{name:'Fernet',price:4000},{name:'Gancia',price:4000}
+    ]},
+    { id:'cervezas', icon:'🍺', title:'Cervezas', items:[
+      {name:'Lata Rubia',price:5000},{name:'Lata Negra',price:5500},{name:'Brahma',price:8000},
+      {name:'Quilmes',price:8000},{name:'Stella Artois',price:12000},{name:'Quilmes Negra',price:12000}
+    ]},
+    { id:'gaseosas', icon:'🥤', title:'Gaseosas', items:[
+      {name:'Coca-Cola / Pepsi',price:3000},{name:'Sprite / 7UP',price:3000},
+      {name:'Fanta / Mirinda',price:3000},{name:'Coca-Cola Zero',price:3000}
+    ]},
+    { id:'aguas', icon:'💧', title:'Aguas', items:[
+      {name:'Agua',price:2500},{name:'Soda',price:2500}
+    ]},
+    { id:'saborizadas', icon:'🍹', title:'Aguas Saborizadas', items:[
+      {name:'Pomelo',price:3000},{name:'Naranja',price:3000},{name:'Manzana',price:3000}
+    ]},
+    { id:'vinos', icon:'🍷', title:'Vinos', items:[
+      {name:'Michel Torino',price:7000},{name:'Estancia Mendoza Tinto',price:9000},
+      {name:'Alaris',price:9000},{name:'Santa Julia',price:15000}
+    ]},
+    { id:'aperitivos', icon:'🫧', title:'Aperitivos', items:[
+      {name:'New Age',price:8000},{name:'Frizze',price:8000},
+      {name:'Estancia Mendoza Dulce',price:9000},{name:'Estancia Mendoza Seco',price:9000},
+      {name:'Alaris Dulce',price:9000},{name:'Alaris Seco',price:9000},{name:'Santa Julia Dulce',price:15000}
+    ]},
+    { id:'champagne', icon:'🥂', title:'Champagne', items:[
+      {name:'Federico de Alvear Ext Dulce',price:13000},{name:'Federico de Alvear Ext Brut',price:13000},
+      {name:'Navarro Correa Brut',price:23000}
+    ]},
+    { id:'sidras', icon:'🍏', title:'Sidras', items:[
+      {name:'Sidra',price:7500}
+    ]},
+    { id:'comidas', icon:'🍕', title:'Comidas', items:[
+      {name:'Sandwich de Miga',price:5500,emoji:'🥪'},{name:'Carlito',price:5500,emoji:'🥪'},
+      {name:'Tostado',price:5500,emoji:'🍞'},{name:'Papas Fritas Chica',price:4000,emoji:'🍟'},
+      {name:'Papas Fritas Grande',price:5500,emoji:'🍟'},{name:'Empanadas',price:2000,emoji:'🥟'},
+      {name:'Pizza Común',price:9000,emoji:'🍕'},{name:'½ Pizza Común',price:7500,emoji:'🍕'},
+      {name:'Pizza Especial',price:10000,emoji:'🍕'},{name:'½ Pizza Especial',price:8500,emoji:'🍕'},
+      {name:'Menú',price:15000,emoji:'🍽️'},{name:'Pizzanesa x2',price:20000,emoji:'🍕'},
+      {name:'Pizzanesa x4',price:40000,emoji:'🍕'},{name:'Picada Fiambre',price:16000,emoji:'🧀'},
+      {name:'Picada Suprema',price:16000,emoji:'🧀'},{name:'Picada Suprema Grande',price:20000,emoji:'🧀'},
+      {name:'Plato de Queso',price:5000,emoji:'🧀'},{name:'Plato Surtido',price:5000,emoji:'🍽️'},
+      {name:'Maní',price:3000,emoji:'🥜'}
+    ]},
+    { id:'alquiler', icon:'🥂', title:'Alquiler de Copas', items:[
+      {name:'Copa Champagne',price:2000},{name:'Copa Noruega',price:2000}
+    ]}
+  ],
+  gallery: [
+    {url:'', caption:'El Salón', emoji:'🎊'},
+    {url:'', caption:'Fiestas', emoji:'🎉'},
+    {url:'', caption:'La Cantina', emoji:'🥂'},
+    {url:'', caption:'Ambiente', emoji:'🎶'},
+    {url:'', caption:'Casamientos', emoji:'👰'},
+    {url:'', caption:'Cumpleaños', emoji:'🎂'}
+  ],
+  eventos: [
+    {name:'Fiesta de Carnaval', date:'Sábado 22 de Marzo, 2025', desc:'Una noche de disfraces, música en vivo y la mejor cantina para celebrar el carnaval. ¡Vení disfrazado!', emoji:'🎊', img:''},
+    {name:'Noche de Música en Vivo', date:'Viernes 28 de Marzo, 2025', desc:'Banda en vivo con los mejores temas para bailar. Pista libre y tragos a full toda la noche.', emoji:'🎵', img:''},
+    {name:'Casamiento González - Pérez', date:'Sábado 5 de Abril, 2025', desc:'Celebración privada con coctel, cena y fiesta hasta la madrugada. Salón completo reservado.', emoji:'👰', img:''}
+  ]
+};
+
+/* ════════════════════════════════════════════════════════════
+   STATE — Load from localStorage or use defaults
+════════════════════════════════════════════════════════════ */
+function loadData(key, def) {
+  try { const v = localStorage.getItem('cantina_'+key); return v ? JSON.parse(v) : JSON.parse(JSON.stringify(def)); }
+  catch(e) { return JSON.parse(JSON.stringify(def)); }
+}
+function saveData(key, val) {
+  try { localStorage.setItem('cantina_'+key, JSON.stringify(val)); } catch(e) {}
+}
+
+let DATA = {
+  password: loadData('password', DEFAULT.password),
+  general: loadData('general', DEFAULT.general),
+  popular: loadData('popular', DEFAULT.popular),
+  rec: loadData('rec', DEFAULT.rec),
+  menu: loadData('menu', DEFAULT.menu),
+  gallery: loadData('gallery', DEFAULT.gallery),
+  eventos: loadData('eventos', DEFAULT.eventos)
+};
+
+/* ════════════════════════════════════════════════════════════
+   RENDER SITE
+════════════════════════════════════════════════════════════ */
+function renderSite() {
+  const g = DATA.general;
+  // General
+  document.getElementById('heroTitle').innerHTML = escHtml(g.salonName1) + '<span id="heroSubtitle">' + escHtml(g.salonName2) + '</span>';
+  document.getElementById('heroBadge').textContent = g.badge;
+  document.getElementById('heroTagline').textContent = g.tagline;
+  document.getElementById('navLogo').textContent = '✦ ' + g.salonName1;
+  document.getElementById('footerLogo').textContent = '✦ ' + g.salonName1 + ' ' + g.salonName2;
+  document.getElementById('footerSub').textContent = g.footerSub;
+  // Instagram
+  [document.getElementById('instaBtn'), document.getElementById('instaGalleryLink'), document.getElementById('instaFooterLink')].forEach(el => {
+    if (!el) return;
+    el.href = g.instagram || '#';
+  });
+  document.getElementById('instaGalleryLink').textContent = g.instaHandle + ' ↗';
+  // Hero image
+  const wrap = document.getElementById('heroImageWrap');
+  if (g.heroImg) {
+    wrap.innerHTML = '<img src="' + escHtml(g.heroImg) + '" alt="Salón" style="width:100%;height:100%;object-fit:cover">';
+  } else {
+    wrap.innerHTML = '<div class="hero-image-placeholder"><span class="icon">🎉</span><span>Tu foto del salón aquí</span></div>';
+  }
+
+  renderPopular();
+  renderRec();
+  renderMenu();
+  renderGallery();
+  renderEventos();
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtPrice(p) {
+  return '$' + Number(p).toLocaleString('es-AR');
+}
+
+/* Resolve a popular ref to the live menu item */
+function resolveRef(ref) {
+  if (!ref) return null;
+  const [catId, idxStr] = ref.split(':');
+  const cat = DATA.menu.find(c => c.id === catId);
+  if (!cat) return null;
+  const item = cat.items[parseInt(idxStr)];
+  if (!item) return null;
+  return { ...item, catIcon: cat.icon };
+}
+
+function renderPopular() {
+  const row = document.getElementById('popularRow');
+  row.innerHTML = DATA.popular.map(p => {
+    const item = resolveRef(p.ref);
+    if (!item) return '';
+    return `
+      <div class="popular-card">
+        <div class="popular-fire">${item.emoji || item.catIcon || '⭐'}</div>
+        <div class="popular-name">${escHtml(item.name)}</div>
+        <div class="popular-price">${fmtPrice(item.price)}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderRec() {
+  const el = document.getElementById('recItems');
+  el.innerHTML = DATA.rec.map(r => `<div class="rec-chip">${escHtml(r)}</div>`).join('');
+}
+
+function renderMenu() {
+  const tabs = document.getElementById('menuTabs');
+  const content = document.getElementById('menuContent');
+
+  tabs.innerHTML = `<button class="tab-btn active" onclick="showCat('todas',this)">Todo</button>` +
+    DATA.menu.map(cat => `<button class="tab-btn" onclick="showCat('${cat.id}',this)">${cat.icon} ${escHtml(cat.title)}</button>`).join('');
+
+  // "Todas" block
+  let allHtml = '<div id="cat-todas" class="category-block visible">';
+  DATA.menu.forEach(cat => {
+    allHtml += renderCatBlock(cat);
+  });
+  allHtml += '</div>';
+
+  // Individual blocks
+  DATA.menu.forEach(cat => {
+    allHtml += `<div id="cat-${cat.id}" class="category-block">${renderCatBlock(cat)}</div>`;
+  });
+  content.innerHTML = allHtml;
+}
+
+function renderCatBlock(cat) {
+  let html = `<div class="cat-title"><span class="cat-icon">${cat.icon}</span>${escHtml(cat.title)}</div><div class="item-list">`;
+  cat.items.forEach(item => {
+    if (item.emoji) {
+      html += `<div class="menu-item"><div class="menu-item-left"><div class="food-thumb">${item.emoji}</div><div class="item-name">${escHtml(item.name)}</div></div><div class="item-price">${fmtPrice(item.price)}</div></div>`;
+    } else {
+      html += `<div class="menu-item"><div class="item-name">${escHtml(item.name)}</div><div class="item-price">${fmtPrice(item.price)}</div></div>`;
+    }
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderGallery() {
+  const grid = document.getElementById('galleryGrid');
+  grid.innerHTML = DATA.gallery.map((item, i) => {
+    const inner = item.url
+      ? `<img src="${escHtml(item.url)}" alt="${escHtml(item.caption)}" loading="lazy">`
+      : `<div class="gallery-placeholder"><span class="gi">${item.emoji||'📷'}</span><span>${escHtml(item.caption)}</span></div>`;
+    return `<div class="gallery-item">${inner}<div class="gallery-overlay"><span>${escHtml(item.caption)}</span></div></div>`;
+  }).join('');
+}
+
+function renderEventos() {
+  const list = document.getElementById('eventosList');
+  if (!DATA.eventos.length) {
+    list.innerHTML = '<div class="no-eventos">No hay eventos programados por el momento.</div>';
+    return;
+  }
+  list.innerHTML = DATA.eventos.map(ev => {
+    const imgHtml = ev.img
+      ? `<div class="evento-img"><img src="${escHtml(ev.img)}" alt="${escHtml(ev.name)}"></div>`
+      : `<div class="evento-img">${ev.emoji||'🎉'}</div>`;
+    return `
+      <div class="evento-card">
+        ${imgHtml}
+        <div class="evento-body">
+          <div class="evento-date">📅 ${escHtml(ev.date)}</div>
+          <div class="evento-name">${escHtml(ev.name)}</div>
+          <div class="evento-desc">${escHtml(ev.desc)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function showCat(cat, btn) {
+  document.querySelectorAll('.category-block').forEach(b => b.classList.remove('visible'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('cat-'+cat).classList.add('visible');
+  if (btn) btn.classList.add('active');
+}
+
+/* ════════════════════════════════════════════════════════════
+   ADMIN AUTH
+════════════════════════════════════════════════════════════ */
+function openAdmin() {
+  document.getElementById('adminOverlay').classList.add('open');
+  document.getElementById('adminLogin').style.display = 'flex';
+  document.getElementById('adminPanel').classList.remove('open');
+  document.getElementById('loginInput').value = '';
+  document.getElementById('loginError').style.display = 'none';
+  setTimeout(() => document.getElementById('loginInput').focus(), 100);
+}
+
+function doLogin() {
+  const pwd = document.getElementById('loginInput').value;
+  const stored = loadData('password', DEFAULT.password);
+  if (pwd === (typeof stored === 'string' ? stored : DEFAULT.password)) {
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('adminPanel').classList.add('open');
+    populateAdminForms();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('loginInput').value = '';
+  }
+}
+
+function doLogout() {
+  document.getElementById('adminOverlay').classList.remove('open');
+}
+
+/* ════════════════════════════════════════════════════════════
+   ADMIN TABS
+════════════════════════════════════════════════════════════ */
+function switchAdminTab(name, btn) {
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('atab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ════════════════════════════════════════════════════════════
+   POPULATE ADMIN FORMS
+════════════════════════════════════════════════════════════ */
+function populateAdminForms() {
+  const g = DATA.general;
+  document.getElementById('a-salonName1').value = g.salonName1 || '';
+  document.getElementById('a-salonName2').value = g.salonName2 || '';
+  document.getElementById('a-tagline').value = g.tagline || '';
+  document.getElementById('a-badge').value = g.badge || '';
+  document.getElementById('a-footerSub').value = g.footerSub || '';
+  document.getElementById('a-instagram').value = g.instagram || '';
+  document.getElementById('a-instaHandle').value = g.instaHandle || '';
+  document.getElementById('a-heroImg').value = g.heroImg || '';
+
+  populatePopularAdmin();
+  populateRecAdmin();
+  populateMenuAdmin();
+  populateGalleryAdmin();
+  populateEventosAdmin();
+}
+
+/* ── POPULAR ADMIN ── */
+/* Build flat option list from all menu items */
+function buildMenuOptions() {
+  const opts = [];
+  DATA.menu.forEach(cat => {
+    cat.items.forEach((item, ii) => {
+      opts.push({ ref: cat.id + ':' + ii, label: cat.icon + ' ' + item.name, price: item.price, emoji: item.emoji || cat.icon });
+    });
+  });
+  return opts;
+}
+
+function popularSelectHtml(selectedRef, idx) {
+  const opts = buildMenuOptions();
+  const options = opts.map(o =>
+    `<option value="${o.ref}" ${o.ref === selectedRef ? 'selected' : ''}>${o.label} — ${fmtPrice(o.price)}</option>`
+  ).join('');
+  return `<select data-pop-ref="${idx}" onchange="onPopularChange(${idx},this)">${options}</select>`;
+}
+
+function populatePopularAdmin() {
+  const el = document.getElementById('popularAdminList');
+  el.innerHTML = DATA.popular.map((p, i) => {
+    const resolved = resolveRef(p.ref);
+    const preview = resolved
+      ? `<span class="pop-preview">${resolved.emoji || resolved.catIcon || '⭐'} <strong>${escHtml(resolved.name)}</strong> <span style="color:var(--admin-accent)">${fmtPrice(resolved.price)}</span></span>`
+      : `<span style="color:var(--admin-red);font-size:0.8rem">⚠ Producto no encontrado</span>`;
+    return `
+      <div class="popular-admin-item" style="flex-direction:column;align-items:stretch;gap:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8B949E">Producto ${i+1}</span>
+          <button class="abtn abtn-red abtn-sm" onclick="removePopularItem(${i})">✕</button>
+        </div>
+        ${popularSelectHtml(p.ref, i)}
+        <div id="pop-preview-${i}" style="padding:6px 0 2px;font-size:0.83rem">${preview}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function onPopularChange(i, sel) {
+  const ref = sel.value;
+  const resolved = resolveRef(ref);
+  const preview = document.getElementById('pop-preview-' + i);
+  if (resolved && preview) {
+    preview.innerHTML = `<span class="pop-preview">${resolved.emoji || resolved.catIcon || '⭐'} <strong>${escHtml(resolved.name)}</strong> <span style="color:var(--admin-accent)">${fmtPrice(resolved.price)}</span></span>`;
+  }
+}
+
+function addPopularItem() {
+  // Default to first menu item
+  const first = DATA.menu[0];
+  DATA.popular.push({ ref: first.id + ':0' });
+  populatePopularAdmin();
+}
+function removePopularItem(i) {
+  DATA.popular.splice(i,1);
+  populatePopularAdmin();
+}
+function savePopular() {
+  DATA.popular = DATA.popular.map((_, i) => {
+    const sel = document.querySelector(`[data-pop-ref="${i}"]`);
+    return { ref: sel ? sel.value : '' };
+  }).filter(p => p.ref);
+  saveData('popular', DATA.popular);
+  renderPopular();
+  showToast();
+}
+
+/* ── REC ADMIN ── */
+function populateRecAdmin() {
+  const el = document.getElementById('recAdminList');
+  el.innerHTML = DATA.rec.map((r, i) => `
+    <div class="popular-admin-item">
+      <input type="text" value="${escHtml(r)}" placeholder="ej: 🥃 Fernet con Coca" data-rec-item="${i}" style="flex:1">
+      <button class="abtn abtn-red abtn-sm" onclick="removeRecItem(${i})">✕</button>
+    </div>
+  `).join('');
+}
+function addRecItem() {
+  DATA.rec.push('🍹 Nuevo trago');
+  populateRecAdmin();
+}
+function removeRecItem(i) {
+  DATA.rec.splice(i,1);
+  populateRecAdmin();
+}
+function saveRec() {
+  const els = document.querySelectorAll('[data-rec-item]');
+  DATA.rec = Array.from(els).map(el => el.value).filter(v => v.trim());
+  saveData('rec', DATA.rec);
+  renderRec();
+  showToast();
+}
+
+/* ── MENU ADMIN ── */
+function populateMenuAdmin() {
+  const el = document.getElementById('menuAdminCats');
+  el.innerHTML = DATA.menu.map((cat, ci) => `
+    <div class="cat-accordion" id="cacc-${ci}">
+      <div class="cat-accordion-header" onclick="toggleAccordion(${ci})">
+        <span class="cat-accordion-title">${cat.icon} ${escHtml(cat.title)}</span>
+        <span class="cat-accordion-arrow">▼</span>
+      </div>
+      <div class="cat-accordion-body">
+        <div class="afield" style="margin-bottom:10px">
+          <label>Nombre de categoría</label>
+          <input type="text" value="${escHtml(cat.title)}" data-cat-title="${ci}">
+        </div>
+        ${cat.items.map((item, ii) => `
+          <div class="menu-admin-item">
+            ${item.emoji !== undefined ? `<span>${item.emoji}</span>` : ''}
+            <input type="text" value="${escHtml(item.name)}" placeholder="Nombre" data-item-name="${ci}-${ii}">
+            <input type="number" value="${item.price}" placeholder="Precio" data-item-price="${ci}-${ii}">
+            <button class="abtn abtn-red abtn-sm" onclick="removeMenuItem(${ci},${ii})">✕</button>
+          </div>
+        `).join('')}
+        <button class="abtn abtn-outline abtn-sm" style="margin-top:8px" onclick="addMenuItem(${ci})">+ Agregar</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleAccordion(ci) {
+  document.getElementById('cacc-'+ci).classList.toggle('open');
+}
+function addMenuItem(ci) {
+  const hasEmoji = DATA.menu[ci].id === 'comidas';
+  DATA.menu[ci].items.push({name:'Nuevo ítem', price:0, ...(hasEmoji ? {emoji:'🍽️'} : {})});
+  populateMenuAdmin();
+  document.getElementById('cacc-'+ci).classList.add('open');
+}
+function removeMenuItem(ci, ii) {
+  DATA.menu[ci].items.splice(ii,1);
+  populateMenuAdmin();
+  document.getElementById('cacc-'+ci).classList.add('open');
+}
+function saveMenu() {
+  DATA.menu.forEach((cat, ci) => {
+    const titleEl = document.querySelector(`[data-cat-title="${ci}"]`);
+    if (titleEl) cat.title = titleEl.value;
+    cat.items.forEach((item, ii) => {
+      const nameEl = document.querySelector(`[data-item-name="${ci}-${ii}"]`);
+      const priceEl = document.querySelector(`[data-item-price="${ci}-${ii}"]`);
+      if (nameEl) item.name = nameEl.value;
+      if (priceEl) item.price = parseInt(priceEl.value) || 0;
+    });
+  });
+  saveData('menu', DATA.menu);
+  renderMenu();
+  renderPopular(); // Re-sync prices in "Lo más pedido"
+  showToast();
+}
+
+/* ── GALLERY ADMIN ── */
+function populateGalleryAdmin() {
+  const el = document.getElementById('galleryAdminList');
+  el.innerHTML = DATA.gallery.map((item, i) => `
+    <div class="gallery-admin-item">
+      <div class="gallery-thumb">${item.url ? `<img src="${escHtml(item.url)}" onerror="this.parentElement.textContent='❌'">` : (item.emoji||'📷')}</div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+        <input type="text" value="${escHtml(item.url||'')}" placeholder="URL de imagen" data-gal-url="${i}">
+        <input type="text" value="${escHtml(item.caption||'')}" placeholder="Descripción" data-gal-cap="${i}">
+      </div>
+      <button class="abtn abtn-red abtn-sm" onclick="removeGalleryItem(${i})">✕</button>
+    </div>
+  `).join('');
+}
+function addGalleryItem() {
+  DATA.gallery.push({url:'', caption:'Nueva foto', emoji:'📷'});
+  populateGalleryAdmin();
+}
+function removeGalleryItem(i) {
+  DATA.gallery.splice(i,1);
+  populateGalleryAdmin();
+}
+function saveGallery() {
+  DATA.gallery = DATA.gallery.map((_, i) => ({
+    url: document.querySelector(`[data-gal-url="${i}"]`).value,
+    caption: document.querySelector(`[data-gal-cap="${i}"]`).value,
+    emoji: DATA.gallery[i].emoji || '📷'
+  }));
+  saveData('gallery', DATA.gallery);
+  renderGallery();
+  populateGalleryAdmin();
+  showToast();
+}
+
+/* ── EVENTOS ADMIN ── */
+function populateEventosAdmin() {
+  const el = document.getElementById('eventosAdminList');
+  el.innerHTML = DATA.eventos.map((ev, i) => `
+    <div class="evento-admin-row">
+      <div class="row-header">
+        <span class="row-num">Evento ${i+1}</span>
+        <button class="abtn abtn-red abtn-sm" onclick="removeEvento(${i})">✕ Eliminar</button>
+      </div>
+      <div class="afield"><label>Nombre del evento</label><input type="text" value="${escHtml(ev.name)}" data-ev-name="${i}"></div>
+      <div class="afield"><label>Fecha (ej: Sábado 22 de Marzo, 2025)</label><input type="text" value="${escHtml(ev.date)}" data-ev-date="${i}"></div>
+      <div class="afield"><label>Descripción</label><textarea rows="2" data-ev-desc="${i}">${escHtml(ev.desc)}</textarea></div>
+      <div class="afield"><label>Emoji (si no hay foto)</label><input type="text" value="${escHtml(ev.emoji||'🎉')}" data-ev-emoji="${i}" style="width:64px"></div>
+      <div class="afield"><label>URL de imagen (opcional)</label><input type="text" value="${escHtml(ev.img||'')}" placeholder="https://..." data-ev-img="${i}"><div class="upload-hint">Subí la imagen a imgbb.com y pegá el URL aquí.</div></div>
+    </div>
+  `).join('');
+}
+function addEvento() {
+  DATA.eventos.push({name:'Nuevo Evento', date:'Próximamente', desc:'Descripción del evento.', emoji:'🎉', img:''});
+  populateEventosAdmin();
+}
+function removeEvento(i) {
+  DATA.eventos.splice(i,1);
+  populateEventosAdmin();
+}
+function saveEventos() {
+  DATA.eventos = DATA.eventos.map((_, i) => ({
+    name: document.querySelector(`[data-ev-name="${i}"]`).value,
+    date: document.querySelector(`[data-ev-date="${i}"]`).value,
+    desc: document.querySelector(`[data-ev-desc="${i}"]`).value,
+    emoji: document.querySelector(`[data-ev-emoji="${i}"]`).value,
+    img: document.querySelector(`[data-ev-img="${i}"]`).value
+  }));
+  saveData('eventos', DATA.eventos);
+  renderEventos();
+  showToast();
+}
+
+/* ── GENERAL SAVE ── */
+function saveGeneral() {
+  DATA.general = {
+    salonName1: document.getElementById('a-salonName1').value,
+    salonName2: document.getElementById('a-salonName2').value,
+    tagline: document.getElementById('a-tagline').value,
+    badge: document.getElementById('a-badge').value,
+    footerSub: document.getElementById('a-footerSub').value,
+    instagram: document.getElementById('a-instagram').value,
+    instaHandle: document.getElementById('a-instaHandle').value,
+    heroImg: document.getElementById('a-heroImg').value
+  };
+  saveData('general', DATA.general);
+  renderSite();
+  showToast();
+}
+
+/* ── PASSWORD ── */
+function changePassword() {
+  const current = document.getElementById('pwdCurrent').value;
+  const newPwd = document.getElementById('pwdNew').value;
+  const confirm = document.getElementById('pwdConfirm').value;
+  const stored = loadData('password', DEFAULT.password);
+  const msg = document.getElementById('pwdMsg');
+
+  if (current !== (typeof stored === 'string' ? stored : DEFAULT.password)) {
+    msg.style.display='block'; msg.style.color='var(--admin-red)'; msg.textContent='Contraseña actual incorrecta.'; return;
+  }
+  if (!newPwd || newPwd.length < 4) {
+    msg.style.display='block'; msg.style.color='var(--admin-red)'; msg.textContent='La nueva contraseña debe tener al menos 4 caracteres.'; return;
+  }
+  if (newPwd !== confirm) {
+    msg.style.display='block'; msg.style.color='var(--admin-red)'; msg.textContent='Las contraseñas no coinciden.'; return;
+  }
+  saveData('password', newPwd);
+  DATA.password = newPwd;
+  msg.style.display='block'; msg.style.color='var(--admin-green)'; msg.textContent='✓ Contraseña actualizada correctamente.';
+  document.getElementById('pwdCurrent').value='';
+  document.getElementById('pwdNew').value='';
+  document.getElementById('pwdConfirm').value='';
+}
+
+/* ── RESET ── */
+function resetAll() {
+  if (!confirm('¿Estás seguro? Esto borrará todos los cambios.')) return;
+  ['password','general','popular','rec','menu','gallery','eventos'].forEach(k => localStorage.removeItem('cantina_'+k));
+  DATA = {
+    password: DEFAULT.password,
+    general: JSON.parse(JSON.stringify(DEFAULT.general)),
+    popular: JSON.parse(JSON.stringify(DEFAULT.popular)),
+    rec: JSON.parse(JSON.stringify(DEFAULT.rec)),
+    menu: JSON.parse(JSON.stringify(DEFAULT.menu)),
+    gallery: JSON.parse(JSON.stringify(DEFAULT.gallery)),
+    eventos: JSON.parse(JSON.stringify(DEFAULT.eventos))
+  };
+  renderSite();
+  populateAdminForms();
+  showToast('Datos reseteados');
+}
+
+/* ════════════════════════════════════════════════════════════
+   TOAST
+════════════════════════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('saveToast');
+  el.textContent = msg || '✓ Guardado correctamente';
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+/* ════════════════════════════════════════════════════════════
+   NAV SCROLL & BACK TO TOP
+════════════════════════════════════════════════════════════ */
+const backTop = document.getElementById('backTop');
+window.addEventListener('scroll', () => {
+  backTop.classList.toggle('visible', window.scrollY > 400);
+}, { passive: true });
+
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+e.target.id));
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+
+/* ════════════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════════════ */
+renderSite();
+</script>
+</body>
+</html>
